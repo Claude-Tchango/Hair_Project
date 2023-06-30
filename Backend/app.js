@@ -46,15 +46,12 @@ const Users = sequelize.define('Users', {
   },
   typeDeCheveux: {
     type: Sequelize.STRING,
-
   },
   profileImage: {
     type: Sequelize.STRING,
-
   },
   age: {
     type: Sequelize.INTEGER,
-    allowNull: false,
   },
   role: {
     type: Sequelize.ENUM('user', 'admin', 'moderator'),
@@ -63,7 +60,29 @@ const Users = sequelize.define('Users', {
   },
 });
 
-const models = { Users, Produit, Programm };
+const Routines = sequelize.define('Routines', {
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  produits: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  instructions: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  date: {
+    type: Sequelize.DATE,
+    allowNull: false,
+  },
+});
+
+Routines.belongsTo(Users, { foreignKey: 'userId' });
+Users.hasMany(Routines, { foreignKey: 'userId' });
+
+const models = { Users, Produit, Programm, Routines };
 
 const server = new ApolloServer({
   typeDefs,

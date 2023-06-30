@@ -29,6 +29,14 @@ const resolvers = {
       ensureAuthenticated(context);
       return await context.models.Programm.findById(id);
     },
+    getAllRoutines: async (_, __, context) => {
+      ensureAuthenticated(context);
+      return await context.models.Routines.findAll();
+    },
+    getRoutine: async (_, { id }, context) => {
+      ensureAuthenticated(context);
+      return await context.models.Routines.findByPk(id);
+    },
     message: () => 'Bienvenue sur Haircare GraphQL API!',
   },
   Mutation: {
@@ -153,6 +161,35 @@ const resolvers = {
       if (!user) throw new Error('You are not authenticated!');
 
       const result = await models.Users.destroy({ where: { id: user.id } });
+      return result > 0;
+    },
+    createRoutine: async (_, { name, produits, instructions, date }, context) => {
+      ensureAuthenticated(context);
+      const routine = await context.models.Routines.create({
+        name,
+        produits,
+        instructions,
+        date,
+        userId: context.currentUser.id,
+      });
+      return routine;
+    },
+    updateRoutine: async (_, { id, name, produits, instructions, date }, context) => {
+      ensureAuthenticated(context);
+      const routine = await context.models.Routines.findByPk(id);
+      if (!routine) throw new Error('Routine not found');
+
+      if (name) routine.name = name;
+      if (produits) routine.produits = produits;
+      if (instructions) routine.instructions = instructions;
+      if (date) routine.date = date;
+
+      await routine.save();
+      return routine;
+    },
+    deleteRoutine: async (_, { id }, context) => {
+      ensureAuthenticated(context);
+      const result = await context.models.Routines.destroy({ where: { id } });
       return result > 0;
     },
   },

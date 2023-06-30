@@ -1,11 +1,11 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
-enum UserRole {
-  user
-  admin
-  moderator
-}
+  enum UserRole {
+    user
+    admin
+    moderator
+  }
 
   type Users {
     id: ID!
@@ -17,6 +17,7 @@ enum UserRole {
     mdp: String!
     typeDeCheveux: String
     produits: [Produit!]!
+    routines: [Routines!]!
     role: UserRole!
   }
 
@@ -34,11 +35,20 @@ enum UserRole {
     challengeDuMoment: String!
   }
 
+  type Routines {
+    id: ID!
+    name: String!
+    produits: String!
+    instructions: String!
+    date: String!
+    user: Users!
+  }
+
   type Me {
     user: Users!
     token: String!
   }
-    
+
   type Query {
     getUser(id: ID!): Users
     getAllUsers: [Users!]!
@@ -46,13 +56,14 @@ enum UserRole {
     getAllProducts: [Produit!]!
     getProgramm(id: ID!): Programm 
     getAllProgramm: [Programm!]!
+    getRoutine(id: ID!): Routines
+    getAllRoutines: [Routines!]!
     message: String!
   }
-  
 
   type Mutation {
-    createUser(firstName: String!, lastName: String!, email: String!, mdp: String!): Users
-    updateUser(id: ID!, firstName: String, lastName: String, email: String, mdp: String, age: Int, profileImage: String,typeDeCheveux: String): Users
+    createUser(firstName: String!, lastName: String!, email: String!, mdp: String!, age: Int, profileImage: String, typeDeCheveux: String): Users
+    updateUser(id: ID!, firstName: String, lastName: String, email: String, mdp: String, age: Int, profileImage: String, typeDeCheveux: String): Users
     deleteUser(id: ID!): Boolean
     createProduit(name: String!, price: Float!, quantite: Int!): Produit
     updateProduit(id: ID!, name: String, price: Float, quantite: Int): Produit
@@ -60,6 +71,9 @@ enum UserRole {
     createProgramm(name: String!, description: String!, challengeDuMoment: String!): Programm
     updateProgramm(id: ID!, name: String, description: String, challengeDuMoment: String): Programm
     deleteProgramm(id: ID!): Boolean
+    createRoutine(name: String!, produits: String!, instructions: String!, date: String!): Routines
+    updateRoutine(id: ID!, name: String, produits: String, instructions: String, date: String): Routines
+    deleteRoutine(id: ID!): Boolean
     login(email: String!, mdp: String!): Me
     deleteMyAccount: Boolean
   }
